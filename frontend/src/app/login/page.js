@@ -1,3 +1,4 @@
+// app/login/page.js
 "use client";
 
 import { useState } from "react";
@@ -14,22 +15,30 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(data.message);
+        // Store the token in localStorage
+        localStorage.setItem("token", data.token);
+        // Store user data if needed
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        setMessage("Login successful!");
+        // Redirect to dashboard
         router.push("/dashboard");
-        router.refresh(); // Refresh the page to update server components
       } else {
         setMessage(data.message || "Login failed");
       }
     } catch (error) {
+      console.error("Login error:", error);
       setMessage("An error occurred. Please try again.");
     }
   };
@@ -79,3 +88,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
