@@ -9,8 +9,10 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/frontend
+      - /frontend/node_modules  # Prevent overwriting installed modules
     depends_on:
       - backend
+
 
   backend:
     build: ./backend
@@ -20,10 +22,12 @@ services:
       - "5000:5000"
     volumes:
       - ./backend:/backend
+      - /backend/node_modules  # Prevents overwriting node_modules
     environment:
       MONGO_URI: "mongodb://mongodb:27017/cv_database"
     depends_on:
       - mongodb
+
 
   mongodb:
     image: mongo:latest
@@ -40,6 +44,18 @@ services:
     command: ["sh", "-c", "python -m venv . && source bin/activate && pip install -r requirements.txt"]
     volumes:
       - ./pythonscripts:/pythonscripts
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
 
 volumes:
   mongodb_data:
+  ollama_data:
