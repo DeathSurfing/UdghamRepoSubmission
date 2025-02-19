@@ -32,15 +32,17 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">Upload Your CV</h2>
-        {message && <p className="text-green-600">{message}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 font-mono p-4 bg-black">
+      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-gray-900">
+          Upload Your CV
+        </h2>
+        {message && <p className="text-green-600 text-center mb-4">{message}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -48,19 +50,22 @@ export default function UploadPage() {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             type="file"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             accept=".pdf"
             onChange={(e) => setCv(e.target.files[0])}
             required
           />
-          <button type="submit" className="bg-blue-600 text-white p-2 rounded">
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 sm:p-3 rounded transition duration-200"
+          >
             Upload CV
           </button>
         </form>
