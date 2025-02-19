@@ -20,10 +20,26 @@ services:
       - "5000:5000"
     volumes:
       - ./backend:/backend
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017/cv_database"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
 
   pythonscripts:
     build: ./pythonscripts
     working_dir: /pythonscripts
-    command: ["/bin/sh", "-c", "python -m venv . && . venv/bin/activate && pip install -r requirements.txt && tail -f /dev/null"]
+    command: ["sh", "-c", "python -m venv . && source bin/activate && pip install -r requirements.txt"]
     volumes:
       - ./pythonscripts:/pythonscripts
+
+volumes:
+  mongodb_data:

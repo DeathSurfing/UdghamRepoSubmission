@@ -25,11 +25,11 @@ app.get("/test", (req, res) => {
 	res.send("Server is working");
 });
 
-// Connect to MongoDB
+// Connect to MongoDB (Docker uses service name "mongodb" as the hostname)
 mongoose
-	.connect("mongodb://127.0.0.1:27017/cv_database", {})
-	.then(() => console.log("MongoDB connected"))
-	.catch((err) => console.error("MongoDB connection error:", err));
+	.connect("mongodb://mongodb:27017/cv_database", {})
+	.then(() => console.log("✅ MongoDB connected"))
+	.catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // Debugging: Log when routes are registered
 console.log("✅ Registering routes...");
@@ -37,5 +37,5 @@ app.use("/api/candidates", candidateRoutes);
 
 // Start Server
 app.listen(PORT, () => {
-	console.log(`Server running on http://localhost:${PORT}`);
+	console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
