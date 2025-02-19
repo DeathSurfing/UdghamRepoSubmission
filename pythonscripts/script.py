@@ -1,11 +1,12 @@
 import json
-import requests
 import PyPDF2
 import docx
 import sys
 from pymongo import MongoClient
 from bson import ObjectId
 import numpy as np
+from pathlib import Path
+import ollama  # Added Ollama import
 
 # Check if job prompt is provided
 if len(sys.argv) != 2:
@@ -25,12 +26,24 @@ db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
 def extract_text_from_file(resumepath: str) -> str:
-    if resumepath.endswith(".pdf"):
-        with open(resumepath, "rb") as file:
+    # Adjust path to go up one level and into backend/uploads
+    base_dir = Path(__file__).parent
+    uploads_dir = base_dir.parent / 'backend' / 'uploads'
+
+    # Remove leading '/uploads/' if it exists
+    resumepath_clean = resumepath.lstrip('/').replace('uploads/', '')
+
+    resume_full_path = (uploads_dir / resumepath_clean).resolve()
+
+    if not resume_full_path.exists():
+        raise FileNotFoundError(f"Resume file not found at {resume_full_path}")
+
+    if resume_full_path.suffix == ".pdf":
+        with open(resume_full_path, "rb") as file:
             reader = PyPDF2.PdfReader(file)
             text = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
-    elif resumepath.endswith(".docx") or resumepath.endswith(".doc"):
-        doc = docx.Document(resumepath)
+    elif resume_full_path.suffix in [".docx", ".doc"]:
+        doc = docx.Document(resume_full_path)
         text = "\n".join([para.text for para in doc.paragraphs])
     else:
         raise ValueError("Unsupported file format")
@@ -39,8 +52,7 @@ def extract_text_from_file(resumepath: str) -> str:
 def analyze_resume(resumepath: str, jobprompt: str):
     resume_text = extract_text_from_file(resumepath)
     
-    ollama_url = "http://127.0.0.1:11434/api/generate"
-    model = "deepseek-coder:latest"
+    model = "deepseek-r1:1.5b"
     
     prompt = f"""
     Analyze the following resume for the given job prompt and provide a JSON response with the following structure:
@@ -57,24 +69,19 @@ def analyze_resume(resumepath: str, jobprompt: str):
     {resume_text}
     """
     
-    payload = {
-        "model": model,
-        "prompt": prompt,
-        "stream": False
-    }
-    
-    response = requests.post(ollama_url, json=payload)
-    
-    if response.status_code == 200:
-        try:
-            data = response.json()
-            content = data.get("response", "{}")  # Get response content
-            analysis_result = json.loads(content)  # Parse JSON output
-            return analysis_result
-        except json.JSONDecodeError:
-            return {"error": "Failed to parse JSON response from Ollama."}
-    else:
-        return {"error": f"Ollama API error: {response.status_code}"}
+    try:
+        response = ollama.generate(
+            model=model,
+            prompt=prompt,
+            stream=False
+        )
+        content = response.get('response', '{}')
+        analysis_result = json.loads(content)
+        return analysis_result
+    except json.JSONDecodeError as e:
+        return {"error": f"Failed to parse JSON response: {str(e)}"}
+    except Exception as e:
+        return {"error": f"Ollama error: {str(e)}"}
 
 def update_mongodb(object_id, result):
     """Updates the existing document in MongoDB by adding the analysis result."""

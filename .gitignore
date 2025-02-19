@@ -50,3 +50,4 @@ pythonscripts/include
 pythonscripts/lib
 pythonscripts/lib64
 pythonscripts/pyvenv.cfg
+pythonscripts/venv/
