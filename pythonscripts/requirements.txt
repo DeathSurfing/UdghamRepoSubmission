@@ -1,4 +1,3 @@
-json 
 requests
 PyPDF2
 python-docx
