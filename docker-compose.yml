@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    working_dir: /frontend
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/frontend
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    working_dir: /backend
+    command: npm start
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/backend
+
+  pythonscripts:
+    build: ./pythonscripts
+    working_dir: /pythonscripts
+    command: ["/bin/sh", "-c", "python -m venv . && . venv/bin/activate && pip install -r requirements.txt && tail -f /dev/null"]
+    volumes:
+      - ./pythonscripts:/pythonscripts
