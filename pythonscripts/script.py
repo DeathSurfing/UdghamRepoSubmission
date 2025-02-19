@@ -52,9 +52,11 @@ def extract_text_from_file(resumepath: str) -> str:
 def analyze_resume(resumepath: str, jobprompt: str):
     resume_text = extract_text_from_file(resumepath)
     
-    model = "deepseek-r1:1.5b"
+    model = "llama3.2:1b"
     
     prompt = f"""
+
+    You are a very smart AI that can analyze resumes for a job.
     Analyze the following resume for the given job prompt and provide a JSON response with the following structure:
     {{
         "rating": <integer from 0 to 10>,
@@ -67,6 +69,8 @@ def analyze_resume(resumepath: str, jobprompt: str):
     
     Resume:
     {resume_text}
+
+    Your Response MUST ONLY HAVE THE JSON STRUCTURE as shown above.
     """
     
     try:
