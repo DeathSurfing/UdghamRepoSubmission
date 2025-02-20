@@ -32,8 +32,8 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 font-mono p-4 bg-black">
-      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-950 font-mono p-4 ">
+      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md border border-blue-400 border-2">
         <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-gray-900">
           Upload Your CV
         </h2>

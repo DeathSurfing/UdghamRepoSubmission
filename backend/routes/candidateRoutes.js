@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const pdfParse = require("pdf-parse");
 const Candidate = require("../models/Candidate");
 
 const router = express.Router();
@@ -43,10 +44,21 @@ router.post("/upload", upload.single("cv"), async (req, res) => {
 				.json({ success: false, message: "No file uploaded" });
 		}
 
+		let cvText = "";
+		if (req.file.mimetype === "application/pdf") {
+			const dataBuffer = fs.readFileSync(
+				path.join(uploadFolder, req.file.filename)
+			);
+			cvText = (await pdfParse(dataBuffer)).text;
+		}
+
 		const newCandidate = new Candidate({
 			name: req.body.name,
 			email: req.body.email,
 			cvUrl: `/uploads/${req.file.filename}`,
+			analysis_result: {
+				cvText: cvText,
+			},
 		});
 
 		await newCandidate.save();
@@ -54,7 +66,7 @@ router.post("/upload", upload.single("cv"), async (req, res) => {
 		res.json({
 			success: true,
 			message: "CV uploaded successfully",
-			candidate: newCandidate, // Return the candidate object
+			candidate: newCandidate,
 		});
 	} catch (error) {
 		console.error("❌ Upload error:", error);
