@@ -1,16 +1,16 @@
 "use client";
 
+import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Register() {
   const router = useRouter();
-  const { toast } = useToast();
+  const { showToast } = useToast(); // Changed from toast to showToast
   const [isLoading, setIsLoading] = useState(false);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -34,14 +34,14 @@ export default function Register() {
         throw new Error(data.error || 'Registration failed');
       }
 
-      toast({
+      showToast({ // Changed from toast to showToast
         title: 'Success!',
         description: 'Registration successful. Redirecting...',
       });
 
       router.push('/dashboard');
     } catch (error) {
-      toast({
+      showToast({ // Changed from toast to showToast
         variant: 'destructive',
         title: 'Error',
         description: error instanceof Error ? error.message : 'Registration failed',
