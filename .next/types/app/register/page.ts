@@ -1,4 +1,4 @@
-// File: /home/vikk/Documents/GitHub/UdghamRepoSubmission/app/register/page.tsx
+// File: /app/app/register/page.tsx
 import * as entry from '../../../../app/register/page.js'
 import type { ResolvingMetadata } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

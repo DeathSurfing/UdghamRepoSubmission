@@ -1,4 +1,4 @@
-// File: /home/vikk/Documents/GitHub/UdghamRepoSubmission/app/api/auth/register/route.ts
+// File: /app/app/api/auth/register/route.ts
 import * as entry from '../../../../../../app/api/auth/register/route.js'
 import type { NextRequest } from 'next/server.js'
 
