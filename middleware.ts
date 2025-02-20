@@ -8,20 +8,25 @@ const PUBLIC_PATHS = ['/', '/login', '/register'];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Allow public paths
   if (PUBLIC_PATHS.includes(pathname)) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get('auth-token');
+  // Retrieve the token from cookies
+  const token = request.cookies.get('auth-token')?.value;
 
+  // Redirect if token is missing
   if (!token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
   try {
-    verify(token.value, JWT_SECRET);
+    // Verify the JWT token
+    verify(token, JWT_SECRET);
     return NextResponse.next();
   } catch (error) {
+    console.error('JWT verification failed:', error);
     return NextResponse.redirect(new URL('/login', request.url));
   }
 }
